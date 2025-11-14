@@ -126,13 +126,6 @@ class TrainingArguments(transformers.Seq2SeqTrainingArguments):
     save_total_limit: int = field(default=40, metadata={"help": 'How many checkpoints to save before the oldest is overwritten'})
 
 
-def gradient_write_file_create(file_path, parameter_name, epoch=0):
-    file_path = file_path.split("../results/")[1]
-    file_path = f"/home/chenqing_zhu/FLAttackPeftStore/{file_path}/gradients"
-    os.makedirs(file_path, exist_ok=True)
-    file_name = os.path.join(file_path, f"{parameter_name}-epoch{epoch}.json")
-    return file_name
-
 def save_single_module_gradient_changes_incrementally(file_path, changes: torch.Tensor):
     # 将 torch.Tensor 转换为 list
     changes_as_list = changes.tolist()
