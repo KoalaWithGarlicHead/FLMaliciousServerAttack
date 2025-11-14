@@ -1,0 +1,63 @@
+{
+    "server":{
+        "name": "base",
+        "only_train_last_epoch": true,
+        "fl_epochs": 3,
+        "adapter_type": "LoRA",
+        "save_path_suffix": "server_poison",
+        "client_dataset": {
+            "name": "medical_huatuo",
+            "instruction_suffix_train": "",
+            "instruction_suffix_test": ""
+        },
+         "server_dataset": {
+            "name": "client_inversion",
+            "instruction_suffix_train": "",
+            "instruction_suffix_test": "",
+            "inversion_data_dir": ["PATH_TO_CLIENT_INVERSION_DATA"],
+            "train_max_num": 200
+        },
+        "client_config": {
+            "name": "base"
+        },
+        "model_config": {
+            "model_name": "llama_3.1_8b", // you can change to "Mistral-7B-Instruct-v0.3", "qwen3_8B", "c4ai-command-r7b",
+            "model_type": "llama", // You can change to "mistral", "qwen3", "command-r"
+            "model_path": "PATH_TO_SAVED_CLIENT_MODEL",
+            "mode": "normal",
+            "device_map":"auto",
+            "data_type": "f32",
+            "r": 1024,
+            "pad": "left"
+        },
+        "server_fl_train": {
+            "name": "normal",
+            "qlora": false,
+            "lr_scheduler_type": "linear",
+            "lr": 0.000005,
+            "weight_decay": 0,
+            "epochs": 1,
+            "batch_size": 5,
+            "train_type": "server",
+            "save_steps": 500,
+            "logging_steps": 10,
+            "gradient_accumulation_steps": 1
+        },
+        "client_fl_train": {
+            "name": "qlora",
+            "qlora": false,
+            "lr_scheduler_type": "linear",
+            "lr": 0.00001,
+            "weight_decay": 0,
+            "epochs": 1,
+            "batch_size": 5,
+            "train_type": "client",
+            "save_steps": 200,
+            "logging_steps": 10,
+            "max_steps": 10000,
+            "gradient_accumulation_steps": 1
+        }
+    }
+
+
+}

@@ -1,0 +1,73 @@
+{
+    "server":{
+        "name": "base",
+        "only_train_last_epoch": true,
+        "fl_epochs": 3,
+        "non_iid": false, // true if you want to set non-iid. The client_dataset must be shibing624_medical in this case
+        "adapter_type": "LoRA",
+        "save_path_suffix": "4clients",
+        "clients_num": 4,
+        "client_dataset": {
+            "name": "shibing624_medical",
+            "instruction_suffix_train": "",
+            "instruction_suffix_test": "",
+            "train_max_num": 10000
+        },
+        "server_dataset": {
+            "name": "client_inversion",
+            "instruction_suffix_train": "",
+            "instruction_suffix_test": ""
+        }
+        "client_config": {
+            "name": "base"
+        },
+        "model_config": {
+            "model_name": "llama_3.1_8b", // you can change to "Mistral-7B-Instruct-v0.3", "qwen3_8B", "c4ai-command-r7b",
+            "model_type": "llama", // You can change to "mistral", "qwen3", "command-r"
+            "model_path": "meta-llama/Llama-3.1-8B-Instruct",
+            "mode": "normal",
+            "device_map":"auto",
+            "data_type": "bf16",
+            "r": 1024,
+            "pad": "left"
+        },
+        "server_fl_train": {
+            "name": "normal",
+            "qlora": false,
+            "lr_scheduler_type": "linear",
+            "lr": 0.000001,
+            "weight_decay": 0,
+            "epochs": 1,
+            "batch_size": 2,
+            "train_type": "server",
+            "save_steps": 200,
+            "logging_steps": 10,
+            "max_steps": 1000,
+            "gradient_accumulation_steps": 1
+        },
+        "client_fl_train": {
+            "name": "fed_sgd",
+            "do_inversion_step": 1, //spefify the step do inversion
+            "do_poison_step": -1, // specify if you want to do poison directly in client training, not suggested unless yuou have a > 82GB GPU
+            "server_poison_epochs": 5, //specify the poison epochs
+            "do_dp": false, // true if you want to add dp in the training
+            "dp_clipping_norm": 5.0,
+            "dp_noise_multiplier": 0.0001,
+            "qlora": false,
+            "lr_scheduler_type": "constant",
+            "lr": 0.000001,
+            "weight_decay": 0,
+            "epochs": 1,
+            "batch_size": 2,
+            "train_type": "client",
+            "save_steps": 500,
+            "logging_steps": 1,
+            "gradient_accumulation_steps": 1,
+            "get_inversion_only": false, // true if you only want to get inversion.
+            "use_inversion_before": false,
+            "inversion_data_dir": ""
+        }
+    }
+
+
+}
